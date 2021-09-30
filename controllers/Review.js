@@ -5,11 +5,12 @@ import User from "../models/Users.js";
 
 const addReview = async(req, res) => {
     const reviews = new Review({
-        comment: req.body.comment,
+        landlord: req.body.landlord,
+        location: req.body.location,
+        quality: req.body.quality,
         video: req.body.video,
         image: req.body.image,
-        helpful: req.body.helpful,
-        date: req.body.date,
+        date: Date.now(),
         userId: req.body.userId
 
     })
@@ -17,7 +18,7 @@ const addReview = async(req, res) => {
     await reviews.save()
 
     try {
-        const update = await User.findByIdAndUpdate(req.headers._id, {
+        const update = await User.findByIdAndUpdate(req.body.userId, {
             $push : {
                 review: reviews
             }
@@ -29,7 +30,8 @@ const addReview = async(req, res) => {
             })
         } else {
             return res.status(200).json({
-                message: "new review"
+                message: "new review",
+                data: reviews
             })
         }
     } catch (error) {
@@ -67,6 +69,24 @@ const editReview = async(req, res) => {
         res.status(500).json(error);
     }
 
+}
+
+const markHelpful = async (req, res) => {
+    try {
+        const review = await Review.findOne({ _id: req.headers._id})
+
+        review.helpful++
+
+        const updatedReview = await review.save();
+
+        return res.status(200).json({
+            data: updatedReview
+        });
+    } catch (error) {
+        res.status(403).json({
+            message: "error"
+        })
+    }
 }
 
 const getSingleReview = async(req, res) => {
@@ -124,6 +144,16 @@ const getHelpfulReview = async (req, res) => {
 
 const getRecentReview = async (req, res) => {
     try {
+        const result = await Review.find().sort({ date: -1})
+        if (!result) {
+            return res.status(400).json({
+                message: "bad request"
+            })
+        } else {
+            return res.status(200).json({
+                data: result
+            });
+        }
 
 
     } catch (error) {
@@ -133,4 +163,4 @@ const getRecentReview = async (req, res) => {
 
 }
 
-export default { addReview, editReview, getAllReviews, getSingleReview, getHelpfulReview, getRecentReview }
+export default { addReview, editReview, getAllReviews, getSingleReview, getHelpfulReview, getRecentReview, markHelpful }

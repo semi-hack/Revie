@@ -7,6 +7,7 @@ router.get('/AllReview', Review.getAllReviews);
 router.get('/singleReview', Review.getSingleReview);
 router.get('/recentReview', Review.getRecentReview);
 router.get('/helpfulReview', Review.getHelpfulReview);
+router.patch('/markHelpful', Review.markHelpful);
 router.patch('/Review', Review.editReview);
 
 export default router

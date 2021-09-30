@@ -2,23 +2,27 @@ import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
 const reviewSchema = new Schema({
-    comment: {
+    landlord: {
         type: String,
     },
-
+    location: {
+        type: String,
+    },
+    quality: {
+        type: String,
+    },
     video: {
         type: String,
     },
-
     images: {
-        type: Array,
+        type: [String],
     },
     date: {
         type: Date
     },
-
     helpful: {
-        type: Number
+        type: Number,
+        default: 0
     },
     userId: { type: Schema.Types.ObjectId, ref: 'User'},
 
